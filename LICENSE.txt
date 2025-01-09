@@ -1,4 +1,6 @@
-Copyright (c) 2022 - 2024 Brenton James Maddocks BEng(CompSys).  All rights reserved.
+Copyright (c) 2022 - 2025 Brenton James Maddocks BEng(CompSys).  
+All rights reserved.
+FLORENCE FSD - Request, Wait, Launch for Concurrrent Thread Que .DLL.
 
 Redistribution and use in source and binary forms, with or without
 modification, are not permitted. All provisions require expressed 
