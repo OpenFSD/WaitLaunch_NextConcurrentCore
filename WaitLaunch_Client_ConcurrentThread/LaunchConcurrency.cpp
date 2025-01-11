@@ -18,24 +18,23 @@ namespace ConcurrentQue
     }
 
     void LaunchConcurrency::Concurrent_Thread_Start(
-        //class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
-        unsigned char* ptr_concurrent_CoreId,
-        class ConcurrentQue::Global_ConcurrentQue* ptr_Global,
-        unsigned char* ptr_NumImplementedCores
+        class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
+        unsigned char concurrent_CoreId,
+        class ConcurrentQue::Global_ConcurrentQue* ptr_Global
     )
     {
-        ptr_LaunchConcurrency_Control->LaunchEnable_Request(ptr_concurrent_CoreId, ptr_Global);
-        ptr_LaunchConcurrency_Control->LaunchQue_Update(ptr_NumImplementedCores);
-        ptr_LaunchConcurrency_Control->LaunchEnable_SortQue(ptr_Global, ptr_NumImplementedCores);
+        ptr_LaunchConcurrency_Control->LaunchEnable_Request(concurrent_CoreId, ptr_Global);
+        ptr_LaunchConcurrency_Control->LaunchQue_Update(ptr_Global->Get_NumCores());
+        ptr_LaunchConcurrency_Control->LaunchEnable_SortQue(ptr_Global, ptr_Global->Get_NumCores());
         ptr_LaunchConcurrency_Control->LaunchEnable_Activate(ptr_Global);
-        ptr_LaunchConcurrency_Control->LaunchQue_Update(ptr_NumImplementedCores);
-        ptr_LaunchConcurrency_Control->LaunchEnable_SortQue(ptr_Global, ptr_NumImplementedCores);
+        ptr_LaunchConcurrency_Control->LaunchQue_Update(ptr_Global->Get_NumCores());
+        ptr_LaunchConcurrency_Control->LaunchEnable_SortQue(ptr_Global, ptr_Global->Get_NumCores());
         ptr_LaunchConcurrency_Control->SetFlag_PraisingLaunch(false);
     }
 
     void LaunchConcurrency::Initialise_Control(
         class ConcurrentQue::Global_ConcurrentQue* ptr_Global,
-        unsigned char* ptr_MyNumImplementedCores
+        unsigned char ptr_MyNumImplementedCores
     )
     {
         ptr_LaunchConcurrency_Control = new class ConcurrentQue::LaunchConcurrency_Control(ptr_Global, ptr_MyNumImplementedCores);
@@ -43,8 +42,8 @@ namespace ConcurrentQue
     }
 
     void LaunchConcurrency::Thread_End(
-        //class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
-        unsigned char* ptr_concurrent_CoreId,
+        class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
+        unsigned char concurrent_CoreId,
         class ConcurrentQue::Global_ConcurrentQue* ptr_Global
     )
     {
@@ -53,23 +52,23 @@ namespace ConcurrentQue
 
         }
         ptr_LaunchConcurrency_Control->SetFlag_PraisingLaunch(true);
-        ptr_LaunchConcurrency_Control->Set_concurrent_CoreId_Index(*ptr_LaunchConcurrency_Control->Get_new_concurrent_CoreId_Index());
-        if (*ptr_LaunchConcurrency_Control->Get_concurrent_CoreId_Index() == *ptr_concurrent_CoreId)
+        ptr_LaunchConcurrency_Control->Set_concurrent_CoreId_Index(ptr_LaunchConcurrency_Control->Get_new_concurrent_CoreId_Index());
+        if (ptr_LaunchConcurrency_Control->Get_concurrent_CoreId_Index() == concurrent_CoreId)
         {
-            ptr_LaunchConcurrency_Control->SetFlag_ConcurrentCoreState(ptr_concurrent_CoreId, ptr_Global->GetConst_Core_IDLE());
+            ptr_LaunchConcurrency_Control->SetFlag_ConcurrentCoreState(concurrent_CoreId, ptr_Global->GetConst_Core_IDLE());
         }
         else
         {
-            ptr_LaunchConcurrency_Control->Set_new_concurrent_CoreId_Index(*ptr_LaunchConcurrency_Control->Get_concurrent_CoreId_Index() + 1);
+            ptr_LaunchConcurrency_Control->Set_new_concurrent_CoreId_Index(ptr_LaunchConcurrency_Control->Get_concurrent_CoreId_Index() + 1);
 
-            if (*ptr_LaunchConcurrency_Control->Get_new_concurrent_CoreId_Index() == 3)//NUMBER OF CONCURNT CORES
+            if (ptr_LaunchConcurrency_Control->Get_new_concurrent_CoreId_Index() == 3)//NUMBER OF CONCURNT CORES
             {
                 ptr_LaunchConcurrency_Control->Set_new_concurrent_CoreId_Index(0);
             }
             ptr_LaunchConcurrency_Control->SetFlag_PraisingLaunch(false);
             Thread_End(
-                //ptr_LaunchConcurrency_Control,
-                ptr_concurrent_CoreId,
+                ptr_LaunchConcurrency_Control,
+                concurrent_CoreId,
                 ptr_Global
             );
         }
