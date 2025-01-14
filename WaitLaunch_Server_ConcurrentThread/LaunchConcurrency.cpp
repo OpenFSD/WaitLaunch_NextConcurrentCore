@@ -17,13 +17,10 @@ namespace ConcurrentQue
         delete ptr_LaunchConcurrency_Control;
     }
 
-    void LaunchConcurrency::Concurrent_Thread_Start(
-        class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
-        unsigned char concurrent_CoreId,
-        class ConcurrentQue::Global_ConcurrentQue* ptr_Global
-    )
+    void LaunchConcurrency::Thread_Start(unsigned char concurrent_CoreId)
     {
-        ptr_LaunchConcurrency_Control->LaunchEnable_Request(concurrent_CoreId, ptr_Global);
+        class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control = ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Get_Control_Of_LaunchConcurrency();
+        class ConcurrentQue::Global_ConcurrentQue* ptr_Global = ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Get_GlobalForLaunchConcurrency();
         ptr_LaunchConcurrency_Control->LaunchQue_Update(ptr_Global->Get_NumCores());
         ptr_LaunchConcurrency_Control->LaunchEnable_SortQue(ptr_Global, ptr_Global->Get_NumCores());
         ptr_LaunchConcurrency_Control->LaunchEnable_Activate(ptr_Global);
@@ -41,12 +38,10 @@ namespace ConcurrentQue
         while (ptr_LaunchConcurrency_Control == NULL) { /* wait untill created */ }
     }
 
-    void LaunchConcurrency::Thread_End(
-        class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
-        unsigned char concurrent_CoreId,
-        class ConcurrentQue::Global_ConcurrentQue* ptr_Global
-    )
+    void LaunchConcurrency::Thread_End(unsigned char concurrent_CoreId)
     {
+        class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control = ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Get_Control_Of_LaunchConcurrency();
+        class ConcurrentQue::Global_ConcurrentQue* ptr_Global = ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Get_GlobalForLaunchConcurrency();
         while (ptr_LaunchConcurrency_Control->GetFlag_PraisingLaunch() == true)
         {
 
@@ -66,11 +61,7 @@ namespace ConcurrentQue
                 ptr_LaunchConcurrency_Control->Set_new_concurrent_CoreId_Index(0);
             }
             ptr_LaunchConcurrency_Control->SetFlag_PraisingLaunch(false);
-            Thread_End(
-                ptr_LaunchConcurrency_Control,
-                concurrent_CoreId,
-                ptr_Global
-            );
+            Thread_End(concurrent_CoreId);
         }
     }
 

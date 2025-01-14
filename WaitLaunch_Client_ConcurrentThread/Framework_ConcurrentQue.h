@@ -10,6 +10,9 @@ namespace ConcurrentQue
     public:
         Framework_ConcurrentQue();
         virtual ~Framework_ConcurrentQue();
+        void Thread_Start(unsigned char concurrent_CoreId);
+        void Thread_End(unsigned char concurrent_CoreId);
+
         static class LaunchConcurrency* Get_LaunchConcurrency();
 
     protected:

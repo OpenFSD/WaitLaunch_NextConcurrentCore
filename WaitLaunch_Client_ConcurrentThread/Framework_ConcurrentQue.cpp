@@ -20,6 +20,16 @@ namespace ConcurrentQue
 
 	}
 
+	void Framework_ConcurrentQue::Thread_Start(unsigned char concurrent_CoreId)
+	{
+		ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Thread_Start(concurrent_CoreId);
+	}
+
+	void Framework_ConcurrentQue::Thread_End(unsigned char concurrent_CoreId)
+	{
+		ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Thread_End(concurrent_CoreId);
+	}
+
 	LaunchConcurrency* Framework_ConcurrentQue::Get_LaunchConcurrency()
 	{
 		return ptr_LaunchConcurrency;

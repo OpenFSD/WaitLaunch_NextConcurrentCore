@@ -1,4 +1,5 @@
 #pragma once
+#include "Framework_ConcurrentQue.h"
 #include "LaunchConcurrency_Control.h"
 #include "Global_ConcurrentQue.h"
 
@@ -10,20 +11,13 @@ namespace ConcurrentQue
         LaunchConcurrency();
         virtual ~LaunchConcurrency();
 
-        void Concurrent_Thread_Start(
-            class LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
-            unsigned char concurrent_CoreId,
-            class Global_ConcurrentQue* ptr_Global
-        );
+        void Thread_Start(unsigned char concurrent_CoreId);
         void Initialise_Control(
             class Global_ConcurrentQue* ptr_Global,
             unsigned char ptr_MyNumImplementedCores
         );
-        void Thread_End(
-            class LaunchConcurrency_Control* ptr_LaunchConcurrency_Control,
-            unsigned char concurrent_CoreId,
-            class Global_ConcurrentQue* ptr_Global
-        );
+        void Thread_End(unsigned char concurrent_CoreId);
+
         class LaunchConcurrency_Control* Get_Control_Of_LaunchConcurrency();
         class Global_ConcurrentQue* Get_GlobalForLaunchConcurrency();
 
