@@ -1,22 +1,25 @@
 #include "LaunchConcurrency_Control.h"
 #include <cstddef>
+#include <vector>
 
 namespace ConcurrentQue
 {
-    bool LaunchConcurrency_Control::flag_ConcurrentCoreState[3] = { NULL, NULL, NULL };//NUMBER OF CONCURRENT CORES
+    bool LaunchConcurrency_Control::state_ConcurrentCore[3] = { NULL, NULL, NULL };//NUMBER OF CONCURRENT CORES
     bool LaunchConcurrency_Control::flag_praisingLaunch = NULL;
     unsigned char LaunchConcurrency_Control::concurrent_CoreId_Index = NULL;
     int LaunchConcurrency_Control::count_LaunchActive_For[3] = { NULL, NULL, NULL };//NUMBER OF CONCURNT CORES
     int LaunchConcurrency_Control::count_LaunchIdle_For[3] = { NULL, NULL, NULL };//NUMBER OF CONCURNT CORES
     unsigned char LaunchConcurrency_Control::new_concurrent_CoreId_Index = NULL;
     unsigned char LaunchConcurrency_Control::que_CoreToLaunch[3] = { NULL, NULL, NULL };//NUMBER OF CONCURRENT CORES
+    
+    std::vector<unsigned char>* LaunchConcurrency_Control::stack_PriseEventId;
 
     LaunchConcurrency_Control::LaunchConcurrency_Control(
         ConcurrentQue::Global_ConcurrentQue* ptr_Global,
         unsigned char number_Implemented_Cores
     )
     {
-        bool flag_ConcurrentCoreState[3] = { bool(false), bool(false), bool(false) };//NUMBER OF CONCURRENT CORES
+        bool state_ConcurrentCore[3] = { bool(false), bool(false), bool(false) };//NUMBER OF CONCURRENT CORES
         flag_praisingLaunch = bool(false);
         concurrent_CoreId_Index = unsigned char(0);
         int count_LaunchActive_For[3] = { int(0), int(0), int(0) };//NUMBER OF CONCURNT CORES
@@ -25,11 +28,12 @@ namespace ConcurrentQue
         unsigned char que_CoreToLaunch[3] = { unsigned char(0), unsigned char(0), unsigned char(0) };//NUMBER OF CONCURNT CORES
         for (unsigned char index = 0; index < (number_Implemented_Cores-1); index++)
         {
-            flag_ConcurrentCoreState[index] = ptr_Global->GetConst_Core_IDLE();
+            state_ConcurrentCore[index] = ptr_Global->GetConst_Core_IDLE();
             count_LaunchActive_For[index] = int(0);
             count_LaunchIdle_For[index] = int(0);
             que_CoreToLaunch[index] = index;
         }
+        std::vector<unsigned char>* stack_PriseEventId = new std::vector<unsigned char>;
     }
 
     LaunchConcurrency_Control::~LaunchConcurrency_Control()
@@ -49,7 +53,7 @@ namespace ConcurrentQue
         class ConcurrentQue::Global_ConcurrentQue* ptr_Global
     )
     {
-        while (GetFlag_ConcurrentCoreState(GetFlag_CoreId_Of_CoreToLaunch()) != ptr_Global->GetConst_Core_IDLE())
+        while (Get_State_ConcurrentCore(GetFlag_CoreId_Of_CoreToLaunch()) != ptr_Global->GetConst_Core_IDLE())
         {
 
         }
@@ -87,13 +91,13 @@ namespace ConcurrentQue
         {
             for (unsigned char index_B = index_A + 1; index_B < number_Implemented_Cores - 1; index_B++)
             {
-                if (GetFlag_ConcurrentCoreState(Get_que_CoreToLaunch(index_A)) == ptr_Global->GetConst_Core_ACTIVE())
+                if (Get_State_ConcurrentCore(Get_que_CoreToLaunch(index_A)) == ptr_Global->GetConst_Core_ACTIVE())
                 {
-                    if (GetFlag_ConcurrentCoreState(Get_que_CoreToLaunch(index_B)) == ptr_Global->GetConst_Core_IDLE())
+                    if (Get_State_ConcurrentCore(Get_que_CoreToLaunch(index_B)) == ptr_Global->GetConst_Core_IDLE())
                     {
                         LaunchEnable_ShiftQueValues(index_A, index_B);
                     }
-                    else if (GetFlag_ConcurrentCoreState(Get_que_CoreToLaunch(index_B)) == ptr_Global->GetConst_Core_ACTIVE())
+                    else if (Get_State_ConcurrentCore(Get_que_CoreToLaunch(index_B)) == ptr_Global->GetConst_Core_ACTIVE())
                     {
                         if (Get_count_LaunchActive_For(index_A) > Get_count_LaunchActive_For(index_B))
                         {
@@ -101,9 +105,9 @@ namespace ConcurrentQue
                         }
                     }
                 }
-                else if (GetFlag_ConcurrentCoreState(Get_que_CoreToLaunch(index_A)) == ptr_Global->GetConst_Core_IDLE())
+                else if (Get_State_ConcurrentCore(Get_que_CoreToLaunch(index_A)) == ptr_Global->GetConst_Core_IDLE())
 
-                    if (GetFlag_ConcurrentCoreState(Get_que_CoreToLaunch(index_B)) == ptr_Global->GetConst_Core_IDLE())
+                    if (Get_State_ConcurrentCore(Get_que_CoreToLaunch(index_B)) == ptr_Global->GetConst_Core_IDLE())
                     {
                         if (Get_count_LaunchIdle_For(index_A) < Get_count_LaunchIdle_For(index_B))
                         {
@@ -120,7 +124,7 @@ namespace ConcurrentQue
     {
         for (unsigned char index = 0; index < number_Implemented_Cores; index++)
         {
-            switch (GetFlag_ConcurrentCoreState(index))
+            switch (Get_State_ConcurrentCore(index))
             {
             case false:
             {
@@ -148,9 +152,9 @@ namespace ConcurrentQue
         return que_CoreToLaunch[0];
     }
 
-    bool LaunchConcurrency_Control::GetFlag_ConcurrentCoreState(unsigned char concurrent_CoreId)
+    bool LaunchConcurrency_Control::Get_State_ConcurrentCore(unsigned char concurrent_CoreId)
     {
-        return flag_ConcurrentCoreState[concurrent_CoreId];
+        return state_ConcurrentCore[concurrent_CoreId];
     }
 
     void LaunchConcurrency_Control::SetFlag_PraisingLaunch(bool value)
@@ -163,6 +167,11 @@ namespace ConcurrentQue
         return new_concurrent_CoreId_Index;
     }
 
+    std::vector<unsigned char>* LaunchConcurrency_Control::Get_Stack_PriseEventId()
+    {
+        return stack_PriseEventId;
+    }
+
     void LaunchConcurrency_Control::Set_concurrent_CoreId_Index(unsigned char value)
     {
         concurrent_CoreId_Index = value;
@@ -170,7 +179,7 @@ namespace ConcurrentQue
 
     void LaunchConcurrency_Control::SetFlag_ConcurrentCoreState(unsigned char concurrent_CoreId, bool value)
     {
-        flag_ConcurrentCoreState[concurrent_CoreId] = value;
+        state_ConcurrentCore[concurrent_CoreId] = value;
     }
 
 

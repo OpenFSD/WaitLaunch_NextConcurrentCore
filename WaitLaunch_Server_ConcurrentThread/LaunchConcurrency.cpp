@@ -21,6 +21,7 @@ namespace ConcurrentQue
     {
         class ConcurrentQue::LaunchConcurrency_Control* ptr_LaunchConcurrency_Control = ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Get_Control_Of_LaunchConcurrency();
         class ConcurrentQue::Global_ConcurrentQue* ptr_Global = ConcurrentQue::Framework_ConcurrentQue::Get_LaunchConcurrency()->Get_GlobalForLaunchConcurrency();
+        ptr_LaunchConcurrency_Control->LaunchEnable_Request(concurrent_CoreId, ptr_Global);
         ptr_LaunchConcurrency_Control->LaunchQue_Update(ptr_Global->Get_NumCores());
         ptr_LaunchConcurrency_Control->LaunchEnable_SortQue(ptr_Global, ptr_Global->Get_NumCores());
         ptr_LaunchConcurrency_Control->LaunchEnable_Activate(ptr_Global);

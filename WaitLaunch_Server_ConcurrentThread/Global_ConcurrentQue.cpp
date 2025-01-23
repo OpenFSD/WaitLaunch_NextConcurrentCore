@@ -9,8 +9,8 @@ namespace ConcurrentQue
 
     Global_ConcurrentQue::Global_ConcurrentQue()
     {
-        flag_core_ACTIVE = new bool(true);
-        flag_core_IDLE = new bool(false);
+        flag_core_ACTIVE = bool(true);
+        flag_core_IDLE = bool(false);
 
         number_Implemented_Cores = unsigned char(4);//NUMBER OF CORES
     }
